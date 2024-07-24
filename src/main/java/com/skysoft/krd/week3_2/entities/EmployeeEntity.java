@@ -23,4 +23,9 @@ public class EmployeeEntity {
     @Column(nullable = false)
     private String name;
 
+
+    @OneToOne(mappedBy = "manager")
+    @JsonIgnore
+    private DepartmentEntity managedDepartment;
+
 }
