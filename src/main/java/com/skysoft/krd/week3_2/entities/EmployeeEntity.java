@@ -25,7 +25,7 @@ public class EmployeeEntity {
 
 
     @OneToOne(mappedBy = "manager")
-    @JsonIgnore
+    @JsonIgnore //if you dont do this recursive calling of jakson will be faced
     private DepartmentEntity managedDepartment;
 
 }
