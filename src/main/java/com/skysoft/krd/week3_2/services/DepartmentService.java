@@ -33,12 +33,13 @@ public class DepartmentService {
         Optional<DepartmentEntity> departmentEntity = departmentRepository.findById(departmentId);
         Optional<EmployeeEntity> employeeEntity = employeeRepository.findById(employeeId);
         return departmentEntity.flatMap(departmentEntity1 ->
-           employeeEntity.map(employeeEntity1 -> {
-               departmentEntity1.setManager(employeeEntity1);
-               return departmentRepository.save(departmentEntity1);
-           })).orElse(null);
+                employeeEntity.map(employeeEntity1 -> {
+                    departmentEntity1.setManager(employeeEntity1);
+                    return departmentRepository.save(departmentEntity1);
+                })).orElse(null);
 
     }
+
     public DepartmentEntity getAssignedDepartmentOfManager(Long employeeId) {
 
 //            Optional<EmployeeEntity> employeeEntity = employeeRepository.findById(employeeId);
@@ -49,23 +50,41 @@ public class DepartmentService {
     }
 
     public DepartmentEntity getDepartmentMangedBy(Long employeeId) {
-        EmployeeEntity employeeEntity=employeeRepository.findById(employeeId).orElse(null);
+        EmployeeEntity employeeEntity = employeeRepository.findById(employeeId).orElse(null);
         return departmentRepository.findByManager(employeeEntity);
     }
 
+    public DepartmentEntity assignedWorkerToDepartment(Long departmentId, Long employeeId) {
+        Optional<DepartmentEntity> departmentEntity = departmentRepository.findById(departmentId);
+        Optional<EmployeeEntity> employeeEntity = employeeRepository.findById(employeeId);
+        return departmentEntity.flatMap(department ->
+                employeeEntity.map(employee -> {
+                    employee.setWorkDepartment(department);
+                    employeeRepository.save(employee);
+                    department.getWorkers().add(employee);
+                    return department;
 
-    ;
+                })).orElse(null);
+    }
 
+    public DepartmentEntity assignFreelancerToDepartment(Long departmentId, Long employeeId) {
+        Optional<EmployeeEntity> employeeEntity = employeeRepository.findById(employeeId);
+        Optional<DepartmentEntity> departmentEntity = departmentRepository.findById(departmentId);
+        return departmentEntity.flatMap(department ->
+                employeeEntity.map(employee -> {
+                    employee.getFreelanceDepartment().add(department);
+                    employeeRepository.save(employee);
+                    department.getFreelancers().add(employee);
+                    departmentRepository.save(department);
+                    return department;
+                })).orElse(null);
 
-
-
-
-
-
-
+    }
 
 
 }
+
+
 
 
 
